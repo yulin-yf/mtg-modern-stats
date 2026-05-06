@@ -84,7 +84,7 @@ export async function scrapePlayerDetail(playerId: string): Promise<Player | nul
   }
 }
 
-function getFallbackPlayers(): Player[] {
+export function getFallbackPlayers(): Player[] {
   return [
     { id: 'aspiringspike', name: 'Aspiring Spike', elo: 1875, eloRank: 1, winRate: 64.2, matchesPlayed: 342, recentEvents: [], archetypes: ['Amulet Titan', 'Creativity'] },
     { id: 'kanister', name: 'kanister', elo: 1843, eloRank: 2, winRate: 62.8, matchesPlayed: 518, recentEvents: [], archetypes: ['Yawgmoth', 'Amulet Titan'] },

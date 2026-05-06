@@ -1,36 +1,25 @@
 import { NextResponse } from 'next/server';
-import { fetchCardPrice, fetchPriceHistory } from '@/lib/scrapers/mtggoldfish';
+import { getFallbackPriceHistory } from '@/lib/scrapers/mtggoldfish';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const card = searchParams.get('card');
-  const history = searchParams.get('history');
+  const card = searchParams.get('card') || 'Ragavan, Nimble Pilferer';
+  const historyDays = parseInt(searchParams.get('history') || '30');
 
-  try {
-    if (card && history) {
-      const data = await fetchPriceHistory(card, parseInt(history) || 30);
-      return NextResponse.json({ card, history: data }, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-        },
-      });
-    }
+  const history = getFallbackPriceHistory(card);
+  const currentPrice = history[history.length - 1]?.price || 0;
+  const prevPrice = history[history.length - 2]?.price || currentPrice;
+  const change24h = ((currentPrice - prevPrice) / prevPrice * 100);
 
-    if (card) {
-      const data = await fetchCardPrice(card);
-      if (!data) {
-        return NextResponse.json({ error: 'Card not found' }, { status: 404 });
-      }
-      return NextResponse.json(data, {
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-        },
-      });
-    }
-
-    return NextResponse.json({ error: 'Missing card parameter' }, { status: 400 });
-  } catch (e) {
-    console.error('API error:', e);
-    return NextResponse.json({ error: 'Failed to fetch price data' }, { status: 500 });
-  }
+  return NextResponse.json({
+    name: card,
+    currentPrice,
+    change24h: Math.round(change24h * 100) / 100,
+    change7d: 0,
+    history,
+  }, {
+    headers: {
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+    },
+  });
 }

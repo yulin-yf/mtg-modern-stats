@@ -72,7 +72,7 @@ function getTier(share: number): 'S' | 'A' | 'B' | 'C' {
   return 'C';
 }
 
-function getFallbackMeta(): MetaSnapshot {
+export function getFallbackMeta(): MetaSnapshot {
   // Fallback when scraping fails - shows realistic Modern archetypes
   return {
     date: new Date().toISOString(),

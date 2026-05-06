@@ -105,7 +105,7 @@ export async function fetchPriceHistory(cardName: string, days: number = 30): Pr
   }
 }
 
-function getFallbackDeckPrices(): DeckArchetype[] {
+export function getFallbackDeckPrices(): DeckArchetype[] {
   return [
     { name: 'Murktide Regent', share: 9.2, sampleSize: 170, tier: 'S', keyCards: ['Murktide Regent', 'Ragavan'], price: 1200 },
     { name: 'Living End', share: 7.8, sampleSize: 144, tier: 'S', keyCards: ['Living End', 'Architects of Will'], price: 800 },
@@ -115,7 +115,7 @@ function getFallbackDeckPrices(): DeckArchetype[] {
   ];
 }
 
-function getFallbackPriceHistory(cardName: string): PricePoint[] {
+export function getFallbackPriceHistory(cardName: string): PricePoint[] {
   const base = Math.random() * 50 + 10;
   const points: PricePoint[] = [];
   for (let i = 30; i >= 0; i--) {

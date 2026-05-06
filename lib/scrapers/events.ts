@@ -26,7 +26,7 @@ export async function fetchEvents(format: string = 'modern', months: number = 3)
   }
 }
 
-function getFallbackEvents(): TournamentEvent[] {
+export function getFallbackEvents(): TournamentEvent[] {
   const today = new Date();
   const events: TournamentEvent[] = [
     {
