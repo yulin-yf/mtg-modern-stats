@@ -1,3 +1,5 @@
+import '@/styles/globals.css';
+
 export const metadata = {
   title: 'MTG Modern Stats - 万智牌摩登赛事数据',
   description: '综合 MTGTop8、MTGGoldfish、MTG Elo Project 等网站的摩登赛制数据分析',
