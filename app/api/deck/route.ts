@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
-import { getFallbackMeta } from '@/lib/scrapers/mtgtop8';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const name = searchParams.get('name');
 
-  const meta = getFallbackMeta();
+  const filePath = join(process.cwd(), 'public', 'data', 'meta.json');
+  const meta = JSON.parse(readFileSync(filePath, 'utf-8'));
   
   if (name) {
     const decodedName = decodeURIComponent(name).replace(/-/g, ' ');
     const deck = meta.archetypes.find(
-      (a) => a.name.toLowerCase() === decodedName.toLowerCase()
+      (a: any) => a.name.toLowerCase() === decodedName.toLowerCase()
     );
     
     if (!deck) {

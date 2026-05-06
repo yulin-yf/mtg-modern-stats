@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export async function GET() {
-  const base = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-  const res = await fetch(new URL('/data/events.json', base));
-  const data = await res.json();
+  const filePath = join(process.cwd(), 'public', 'data', 'events.json');
+  const data = JSON.parse(readFileSync(filePath, 'utf-8'));
   return NextResponse.json(data, {
     headers: {
       'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=3600',

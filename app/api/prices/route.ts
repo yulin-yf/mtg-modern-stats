@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const history = getFallbackPriceHistory(card);
   const currentPrice = history[history.length - 1]?.price || 0;
   const prevPrice = history[history.length - 2]?.price || currentPrice;
-  const change24h = ((currentPrice - prevPrice) / prevPrice * 100);
+  const change24h = prevPrice > 0 ? ((currentPrice - prevPrice) / prevPrice * 100) : 0;
 
   return NextResponse.json({
     name: card,
