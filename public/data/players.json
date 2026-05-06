@@ -1,0 +1,134 @@
+{
+  "players": [
+    {
+      "id": "aspiringspike",
+      "name": "Aspiring Spike",
+      "elo": 1875,
+      "eloRank": 1,
+      "winRate": 64.2,
+      "matchesPlayed": 342,
+      "recentEvents": [],
+      "archetypes": [
+        "Amulet Titan",
+        "Creativity"
+      ]
+    },
+    {
+      "id": "kanister",
+      "name": "kanister",
+      "elo": 1843,
+      "eloRank": 2,
+      "winRate": 62.8,
+      "matchesPlayed": 518,
+      "recentEvents": [],
+      "archetypes": [
+        "Yawgmoth",
+        "Amulet Titan"
+      ]
+    },
+    {
+      "id": "mengu",
+      "name": "Mengu",
+      "elo": 1821,
+      "eloRank": 3,
+      "winRate": 61.5,
+      "matchesPlayed": 289,
+      "recentEvents": [],
+      "archetypes": [
+        "Murktide Regent",
+        "Rakdos Scam"
+      ]
+    },
+    {
+      "id": "yowza",
+      "name": "Yowza",
+      "elo": 1809,
+      "eloRank": 4,
+      "winRate": 60.9,
+      "matchesPlayed": 198,
+      "recentEvents": [],
+      "archetypes": [
+        "Hammer Time",
+        "Affinity"
+      ]
+    },
+    {
+      "id": "thurule",
+      "name": "Thurule",
+      "elo": 1795,
+      "eloRank": 5,
+      "winRate": 59.8,
+      "matchesPlayed": 267,
+      "recentEvents": [],
+      "archetypes": [
+        "Living End",
+        "Creativity"
+      ]
+    },
+    {
+      "id": "trellon",
+      "name": "Trellon",
+      "elo": 1788,
+      "eloRank": 6,
+      "winRate": 59.2,
+      "matchesPlayed": 156,
+      "recentEvents": [],
+      "archetypes": [
+        "Burn",
+        "Mono G Tron"
+      ]
+    },
+    {
+      "id": "nathansteuer",
+      "name": "Nathan Steuer",
+      "elo": 1782,
+      "eloRank": 7,
+      "winRate": 58.7,
+      "matchesPlayed": 401,
+      "recentEvents": [],
+      "archetypes": [
+        "Rakdos Scam",
+        "Jund"
+      ]
+    },
+    {
+      "id": "burnt-taco",
+      "name": "Burnt Taco",
+      "elo": 1776,
+      "eloRank": 8,
+      "winRate": 58.1,
+      "matchesPlayed": 223,
+      "recentEvents": [],
+      "archetypes": [
+        "Yawgmoth",
+        "Heliod Combo"
+      ]
+    },
+    {
+      "id": "dominator",
+      "name": "Dominator",
+      "elo": 1769,
+      "eloRank": 9,
+      "winRate": 57.5,
+      "matchesPlayed": 312,
+      "recentEvents": [],
+      "archetypes": [
+        "Dredge",
+        "Living End"
+      ]
+    },
+    {
+      "id": "masonclark",
+      "name": "Mason Clark",
+      "elo": 1761,
+      "eloRank": 10,
+      "winRate": 56.9,
+      "matchesPlayed": 445,
+      "recentEvents": [],
+      "archetypes": [
+        "Murktide Regent",
+        "Grixis Shadow"
+      ]
+    }
+  ]
+}

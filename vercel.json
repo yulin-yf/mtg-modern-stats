@@ -2,22 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "next build",
   "installCommand": "npm install",
-  "regions": ["hkg1"],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, s-maxage=3600, stale-while-revalidate=86400"
-        }
-      ]
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/events",
-      "schedule": "0 0 * * *"
-    }
-  ]
+  "regions": ["hkg1"]
 }

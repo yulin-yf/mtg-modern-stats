@@ -1,0 +1,34 @@
+{
+  "events": [
+    {
+      "id": "rc-spring-2024",
+      "name": "Regional Championship Spring 2024",
+      "nameCN": "2024春季区域冠军赛",
+      "date": "2026-05-20",
+      "location": "Multiple Regions",
+      "format": "Modern",
+      "type": "RC",
+      "attendance": 200
+    },
+    {
+      "id": "pt-chicago-2024",
+      "name": "Pro Tour Chicago",
+      "nameCN": "芝加哥职业巡回赛",
+      "date": "2026-06-20",
+      "location": "Chicago, USA",
+      "format": "Modern",
+      "type": "PT",
+      "attendance": 400
+    },
+    {
+      "id": "nr-barcelona-2024",
+      "name": "NRG Series Barcelona",
+      "nameCN": "NRG系列赛巴塞罗那站",
+      "date": "2026-06-05",
+      "location": "Barcelona, Spain",
+      "format": "Modern",
+      "type": "NR",
+      "attendance": 150
+    }
+  ]
+}
