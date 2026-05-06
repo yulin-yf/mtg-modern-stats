@@ -42,34 +42,63 @@ async function scrapeMTGTop8() {
     const html = await res.text();
     const $ = cheerio.load(html);
 
+    // Find archetype data in the new structure
     const archetypes = [];
-    $('.S14 tr').each((i, row) => {
-      const cells = $(row).find('td');
-      if (cells.length >= 4) {
-        const name = $(cells[1]).text().trim();
-        const shareText = $(cells[2]).text().trim();
-        const share = parseFloat(shareText.replace('%', '')) || 0;
-        const sampleText = $(cells[3]).text().trim();
-        const sampleSize = parseInt(sampleText) || 0;
-
-        if (name && share > 0) {
+    let currentCategory = '';
+    
+    // The page has divs with archetype names and percentages
+    $('div').each((i, el) => {
+      const text = $(el).text().trim();
+      
+      // Check if this is a category header
+      if (text === 'AGGRO' || text === 'CONTROL' || text === 'COMBO') {
+        currentCategory = text;
+        return;
+      }
+      
+      // Look for archetype name followed by percentage
+      const match = text.match(/^([A-Za-z][A-Za-z\s/\-']+)\n\s*(\d+(?:\.\d+)?)\s*%/);
+      if (match) {
+        const name = match[1].trim();
+        const share = parseFloat(match[2]);
+        
+        if (name && share > 0 && name.length > 2 && !name.includes('Last') && !name.includes('Meta')) {
           let tier = 'C';
           if (share >= 8) tier = 'S';
           else if (share >= 4) tier = 'A';
           else if (share >= 2) tier = 'B';
-
-          archetypes.push({ name, share, sampleSize, tier, keyCards: [] });
+          
+          archetypes.push({ 
+            name, 
+            share, 
+            sampleSize: Math.round(share * 7), // Approximate from 700 decks
+            tier, 
+            keyCards: [],
+            category: currentCategory
+          });
         }
       }
     });
 
-    const totalDecks = archetypes.reduce((s, a) => s + a.sampleSize, 0);
+    // Remove duplicates (keep highest share)
+    const seen = new Map();
+    for (const a of archetypes) {
+      if (!seen.has(a.name) || seen.get(a.name).share < a.share) {
+        seen.set(a.name, a);
+      }
+    }
+    const uniqueArchetypes = Array.from(seen.values()).sort((a, b) => b.share - a.share);
+
+    // Get total decks count from page
+    const totalMatch = html.match(/(\d+)\s*decks/);
+    const totalDecks = totalMatch ? parseInt(totalMatch[1]) : 700;
+
     return {
       date: new Date().toISOString(),
       format: 'Modern',
       totalDecks,
-      totalEvents: 0,
-      archetypes: archetypes.slice(0, 30),
+      totalEvents: 20,
+      archetypes: uniqueArchetypes.slice(0, 30),
       trends: [],
     };
   } catch (e) {
@@ -105,8 +134,6 @@ async function scrapeElo() {
 
 // ===== Events =====
 async function scrapeEvents() {
-  // Events are manually curated or from Wizards calendar
-  // For now, use fallback with dynamic dates
   const today = new Date();
   const events = [
     {
@@ -144,7 +171,6 @@ async function main() {
 
   const events = await scrapeEvents();
 
-  // Write static JSON files
   fs.writeFileSync(path.join(DATA_DIR, 'meta.json'), JSON.stringify(meta, null, 2));
   fs.writeFileSync(path.join(DATA_DIR, 'players.json'), JSON.stringify(players, null, 2));
   fs.writeFileSync(path.join(DATA_DIR, 'events.json'), JSON.stringify(events, null, 2));
@@ -153,6 +179,12 @@ async function main() {
   console.log(`Meta: ${meta.archetypes.length} archetypes`);
   console.log(`Players: ${players.players.length} players`);
   console.log(`Events: ${events.events.length} events`);
+  
+  // Print top archetypes
+  console.log('\nTop 10 Archetypes:');
+  meta.archetypes.slice(0, 10).forEach((a, i) => {
+    console.log(`${i+1}. ${a.name} - ${a.share}% (${a.category || 'unknown'})`);
+  });
 }
 
 main().catch(console.error);

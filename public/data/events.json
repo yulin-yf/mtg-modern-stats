@@ -19,16 +19,6 @@
       "format": "Modern",
       "type": "PT",
       "attendance": 400
-    },
-    {
-      "id": "nr-barcelona-2024",
-      "name": "NRG Series Barcelona",
-      "nameCN": "NRG系列赛巴塞罗那站",
-      "date": "2026-06-05",
-      "location": "Barcelona, Spain",
-      "format": "Modern",
-      "type": "NR",
-      "attendance": 150
     }
   ]
 }
