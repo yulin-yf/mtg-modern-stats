@@ -25,7 +25,13 @@ export default function DeckGuidePage({ params }: { params: { name: string } }) 
   const decodedName = decodeURIComponent(params.name).replace(/-/g, ' ');
 
   useEffect(() => {
-    const g = getDeckGuide(decodedName);
+    // Try exact match first, then case-insensitive
+    let g = getDeckGuide(decodedName);
+    if (!g) {
+      // Try title case: "dimir frog" -> "Dimir Frog"
+      const titleCase = decodedName.replace(/\b\w/g, (c) => c.toUpperCase());
+      g = getDeckGuide(titleCase);
+    }
     setGuide(g);
     if (g?.matchups[0]) setActiveMatchup(g.matchups[0]);
     setLoading(false);
