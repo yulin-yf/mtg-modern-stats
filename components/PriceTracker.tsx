@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   LineChart,
   Line,
@@ -11,7 +11,6 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import useSWR from 'swr';
-import type { CardPrice } from '@/types';
 
 const TOP_CARDS = [
   { name: 'Ragavan, Nimble Pilferer', nameCN: '敏捷窃贼拉加万' },
@@ -53,44 +52,71 @@ function PriceSkeleton() {
             />
           ))}
         </div>
-        <div className="flex justify-between mt-3">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="skeleton-bar h-3 w-12 rounded" />
-          ))}
-        </div>
       </div>
     </div>
   );
 }
 
 export default function PriceTracker() {
+  const [search, setSearch] = useState('');
   const [selectedCard, setSelectedCard] = useState(TOP_CARDS[0]);
-  const { data, error } = useSWR(
-    `/api/prices?card=${encodeURIComponent(selectedCard.name)}&history=30`,
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // If user typed a search, use it; otherwise use selected preset
+  const cardName = search.trim() || selectedCard.name;
+  const cardDisplay = search.trim() ? cardName : selectedCard.nameCN || selectedCard.name;
+
+  const { data, error, isLoading } = useSWR(
+    `/api/prices?card=${encodeURIComponent(cardName)}&history=30`,
     fetcher,
     { refreshInterval: 300000 }
   );
 
   return (
     <div className="space-y-4">
-      {/* Card Selector - 移动端横向滚动 */}
-      <div className="card p-4">
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin">
-          {TOP_CARDS.map((card) => (
+      {/* Search + Presets */}
+      <div className="card p-4 space-y-3">
+        <div className="relative">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Search any card / 搜索任意卡牌..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-gray-800/60 border border-gray-700 rounded-lg pl-9 pr-3 py-2.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-mtg-gold/50 focus:bg-gray-800 transition-all"
+          />
+          {search && (
             <button
-              key={card.name}
-              onClick={() => setSelectedCard(card)}
-              className={`px-3 py-2 text-sm rounded-lg border whitespace-nowrap transition-all flex-shrink-0 ${
-                selectedCard.name === card.name
-                  ? 'bg-mtg-gold/15 border-mtg-gold/40 text-mtg-gold'
-                  : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:text-gray-200 hover:bg-gray-800/80'
-              }`}
+              onClick={() => { setSearch(''); setSelectedCard(TOP_CARDS[0]); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 text-xs"
             >
-              <span className="hidden sm:inline">{card.name}</span>
-              <span className="sm:hidden">{card.nameCN}</span>
+              Clear
             </button>
-          ))}
+          )}
         </div>
+
+        {/* Presets - only show when not searching */}
+        {!search && (
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin">
+            {TOP_CARDS.map((card) => (
+              <button
+                key={card.name}
+                onClick={() => setSelectedCard(card)}
+                className={`px-3 py-2 text-sm rounded-lg border whitespace-nowrap transition-all flex-shrink-0 ${
+                  selectedCard.name === card.name
+                    ? 'bg-mtg-gold/15 border-mtg-gold/40 text-mtg-gold'
+                    : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:text-gray-200 hover:bg-gray-800/80'
+                }`}
+              >
+                <span className="hidden sm:inline">{card.name}</span>
+                <span className="sm:hidden">{card.nameCN}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Price Chart */}
@@ -99,14 +125,13 @@ export default function PriceTracker() {
           <div className="h-64 flex items-center justify-center text-red-400">
             Failed to load price data
           </div>
-        ) : !data ? (
+        ) : isLoading || !data ? (
           <PriceSkeleton />
         ) : (
           <>
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between mb-5 gap-2">
               <h3 className="text-lg font-semibold text-gray-100">
-                <span className="hidden sm:inline">{selectedCard.name}</span>
-                <span className="sm:hidden">{selectedCard.nameCN}</span>
+                {cardDisplay}
               </h3>
               <div className="flex gap-5 text-sm">
                 <span>
