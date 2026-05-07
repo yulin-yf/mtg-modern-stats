@@ -3,11 +3,40 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* 暗色主题（默认） */
+    --bg-void: #0b1220;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    --border-default: rgba(31, 41, 55, 0.6);
+    --border-hover: rgba(75, 85, 99, 0.8);
+    --gold: #c9a84c;
+    --gold-light: #fcd34d;
+  }
+
+  [data-theme="light"] {
+    --bg-void: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --border-default: rgba(203, 213, 225, 0.8);
+    --border-hover: rgba(148, 163, 184, 1);
+    --gold: #b45309;
+    --gold-light: #d97706;
+  }
+
   html {
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-mtg-void text-gray-100 antialiased;
+    background-color: var(--bg-void);
+    color: var(--text-primary);
+    @apply antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -15,15 +44,21 @@
 @layer components {
   /* 基础卡片 */
   .card {
-    @apply bg-mtg-card rounded-xl border border-gray-800/60 p-6 shadow-lg;
+    @apply rounded-xl border p-6 shadow-lg;
+    background-color: var(--bg-card);
+    border-color: var(--border-default);
   }
   .card-hover {
-    @apply transition-all duration-300 hover:border-gray-600/80 hover:shadow-xl hover:-translate-y-0.5;
+    @apply transition-all duration-300 hover:-translate-y-0.5;
+  }
+  .card-hover:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   }
 
   /* 稀有度边框 */
   .card-mythic {
-    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    @apply rounded-xl border p-6 shadow-lg;
     border-color: rgba(255, 140, 40, 0.6);
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(255, 111, 0, 0.04) 100%);
   }
@@ -34,7 +69,7 @@
   }
 
   .card-rare {
-    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    @apply rounded-xl border p-6 shadow-lg;
     border-color: rgba(201, 168, 76, 0.45);
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(201, 168, 76, 0.04) 100%);
   }
@@ -45,7 +80,7 @@
   }
 
   .card-uncommon {
-    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    @apply rounded-xl border p-6 shadow-lg;
     border-color: rgba(158, 158, 158, 0.35);
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(158, 158, 158, 0.03) 100%);
   }
@@ -55,9 +90,8 @@
     transform: translateY(-2px);
   }
 
-  /* C tier 用普通卡片但加一点暗色边框 */
   .card-common {
-    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    @apply rounded-xl border p-6 shadow-lg;
     border-color: rgba(75, 85, 99, 0.4);
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(75, 85, 99, 0.02) 100%);
   }
@@ -67,12 +101,27 @@
     transform: translateY(-2px);
   }
 
+  /* light 主题下稀有度卡片需要调整背景 */
+  [data-theme="light"] .card-mythic,
+  [data-theme="light"] .card-rare,
+  [data-theme="light"] .card-uncommon,
+  [data-theme="light"] .card-common {
+    background: var(--bg-card);
+  }
+
   .btn-primary {
-    @apply bg-mtg-gold text-mtg-dark font-semibold px-4 py-2 rounded-lg 
-           hover:brightness-110 transition-all active:scale-[0.98];
+    @apply font-semibold px-4 py-2 rounded-lg transition-all active:scale-[0.98];
+    background-color: var(--gold);
+    color: var(--bg-void);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.1);
   }
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-mtg-gold to-amber-300;
+    @apply bg-clip-text text-transparent bg-gradient-to-r;
+    --tw-gradient-from: var(--gold) var(--tw-gradient-from-position);
+    --tw-gradient-to: var(--gold-light) var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
   }
 
   /* 魔法力符号 */
@@ -96,24 +145,16 @@
   .mana-r { background: linear-gradient(145deg, #FF7043, #C62828); color: white; }
   .mana-g { background: linear-gradient(145deg, #66BB6A, #1B5E20); color: white; }
 
-  /* 稀有度徽章 */
-  .rarity-badge {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded border;
-  }
-  .rarity-mythic { @apply bg-orange-500/10 text-orange-400 border-orange-500/30; }
-  .rarity-rare { @apply bg-yellow-500/10 text-yellow-400 border-yellow-500/30; }
-  .rarity-uncommon { @apply bg-gray-400/10 text-gray-400 border-gray-400/30; }
-  .rarity-common { @apply bg-gray-600/10 text-gray-500 border-gray-600/30; }
-
   /* 骨架屏 */
-  .skeleton {
-    @apply animate-pulse bg-gray-800/60 rounded;
-  }
   .skeleton-bar {
-    @apply animate-pulse bg-gray-800/60 rounded;
+    @apply rounded;
     background: linear-gradient(90deg, rgba(51,65,85,0.4) 25%, rgba(51,65,85,0.7) 50%, rgba(51,65,85,0.4) 75%);
     background-size: 200% 100%;
     animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+  [data-theme="light"] .skeleton-bar {
+    background: linear-gradient(90deg, rgba(203,213,225,0.5) 25%, rgba(203,213,225,0.8) 50%, rgba(203,213,225,0.5) 75%);
+    background-size: 200% 100%;
   }
   @keyframes skeleton-shimmer {
     0% { background-position: 200% 0; }
@@ -181,7 +222,20 @@
   }
   .section-title::before {
     content: '';
-    @apply w-1 h-6 rounded-full bg-mtg-gold;
+    @apply w-1 h-6 rounded-full;
+    background-color: var(--gold);
+  }
+
+  /* 弹窗遮罩 */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+  }
+  .modal-card {
+    @apply rounded-2xl border shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto;
+    background-color: var(--bg-card);
+    border-color: var(--border-default);
   }
 }
 
@@ -189,5 +243,8 @@
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: #334155 transparent;
+  }
+  [data-theme="light"] .scrollbar-thin {
+    scrollbar-color: #cbd5e1 transparent;
   }
 }

@@ -18,6 +18,7 @@ import {
 } from 'recharts';
 import type { DeckArchetype } from '@/types';
 import { getMatchupData, getDecklist, getDeckArchetype } from '@/lib/deck-data';
+import CardModal from '@/components/CardModal';
 
 const TIER_BADGES = {
   S: 'bg-red-500/20 text-red-400 border-red-500/30',
@@ -41,7 +42,6 @@ function ManaSymbols({ colors }: { colors?: string[] }) {
   );
 }
 
-/* 模拟历史占比数据 */
 function generateHistory(deckName: string, currentShare: number) {
   const weeks = ['2025-01-12', '2025-01-19', '2025-01-26', '2025-02-02', '2025-02-09', '2025-02-16', '2025-02-23', '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-30'];
   const base = currentShare;
@@ -56,6 +56,8 @@ export default function DeckPage({ params }: { params: { name: string } }) {
   const [deck, setDeck] = useState<DeckArchetype | null>(null);
   const [allDecks, setAllDecks] = useState<DeckArchetype[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalCard, setModalCard] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const decodedName = decodeURIComponent(params.name).replace(/-/g, ' ');
 
@@ -75,10 +77,17 @@ export default function DeckPage({ params }: { params: { name: string } }) {
       .catch(() => setLoading(false));
   }, [decodedName]);
 
-  // 动态生成对战胜率和牌表
   const matchupData = deck ? getMatchupData(deck.name, allDecks) : [];
   const decklist = deck ? getDecklist(deck.name) : [];
   const archetype = deck ? getDeckArchetype(deck.name) : null;
+
+  const exportDecklist = () => {
+    const lines = decklist.map((c) => `${c.count} ${c.name}`).join('\n');
+    navigator.clipboard.writeText(lines).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   if (loading) {
     return (
@@ -103,6 +112,8 @@ export default function DeckPage({ params }: { params: { name: string } }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {modalCard && <CardModal cardName={modalCard} onClose={() => setModalCard(null)} />}
+
       {/* Header */}
       <div className="mb-8">
         <Link href="/" className="text-sm text-gray-500 hover:text-mtg-gold mb-4 inline-block">
@@ -191,14 +202,26 @@ export default function DeckPage({ params }: { params: { name: string } }) {
 
         {/* Sample Decklist */}
         <div className="card">
-          <h2 className="text-lg font-bold text-gray-100 mb-4">Sample List / 示例牌表</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-100">Sample List / 示例牌表</h2>
+            <button
+              onClick={exportDecklist}
+              className="text-xs px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-mtg-gold hover:border-mtg-gold/50 transition-all"
+            >
+              {copied ? 'Copied! / 已复制 ✓' : 'Copy MTGO / 复制牌表'}
+            </button>
+          </div>
           <div className="space-y-1 max-h-80 overflow-y-auto scrollbar-thin">
             {decklist.length > 0 ? decklist.map((card, i) => (
-              <div key={i} className="flex items-center justify-between py-1 px-2 hover:bg-gray-800/50 rounded">
+              <div
+                key={i}
+                className="flex items-center justify-between py-1 px-2 hover:bg-gray-800/50 rounded cursor-pointer"
+                onClick={() => setModalCard(card.name)}
+              >
                 <div className="flex items-center gap-2">
                   <span className="text-mtg-gold font-mono w-6">{card.count}</span>
                   <div>
-                    <div className="text-sm text-gray-200">{card.name}</div>
+                    <div className="text-sm text-gray-200 hover:text-mtg-gold transition-colors">{card.name}</div>
                     {card.nameCN && <div className="text-xs text-gray-500">{card.nameCN}</div>}
                   </div>
                 </div>
@@ -224,7 +247,11 @@ export default function DeckPage({ params }: { params: { name: string } }) {
         <h2 className="text-lg font-bold text-gray-100 mb-4">Key Cards / 核心卡牌</h2>
         <div className="flex flex-wrap gap-2">
           {deck.keyCards?.map((card) => (
-            <span key={card} className="px-3 py-1.5 bg-gray-800 text-gray-300 rounded-lg text-sm border border-gray-700 hover:border-mtg-gold/50 transition-colors cursor-pointer">
+            <span
+              key={card}
+              className="px-3 py-1.5 bg-gray-800 text-gray-300 rounded-lg text-sm border border-gray-700 hover:border-mtg-gold/50 transition-colors cursor-pointer"
+              onClick={() => setModalCard(card)}
+            >
               {card}
             </span>
           )) || <span className="text-gray-500">No key cards data available / 无核心卡牌数据</span>}

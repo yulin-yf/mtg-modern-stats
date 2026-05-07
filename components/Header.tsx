@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import GlobalSearch from './GlobalSearch';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +29,7 @@ export default function Header() {
             <span className="text-xs text-gray-600 hidden sm:inline">Stats</span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Nav + Search */}
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
@@ -40,6 +42,11 @@ export default function Header() {
               </Link>
             ))}
           </nav>
+
+          <div className="hidden md:flex items-center gap-3">
+            <GlobalSearch />
+            <ThemeToggle />
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -70,6 +77,12 @@ export default function Header() {
                 <span className="text-gray-600 ml-1.5">{item.labelCN}</span>
               </Link>
             ))}
+            <div className="px-3 pt-3 border-t border-gray-800/60">
+              <GlobalSearch />
+            </div>
+            <div className="px-3 pt-2 flex justify-end">
+              <ThemeToggle />
+            </div>
           </nav>
         )}
       </div>
