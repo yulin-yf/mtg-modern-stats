@@ -7,24 +7,169 @@
     scroll-behavior: smooth;
   }
   body {
-    @apply bg-mtg-dark text-gray-100 antialiased;
+    @apply bg-mtg-void text-gray-100 antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
+  /* 基础卡片 */
   .card {
     @apply bg-mtg-card rounded-xl border border-gray-800/60 p-6 shadow-lg;
   }
   .card-hover {
-    @apply transition-all duration-200 hover:border-mtg-gold/40 hover:shadow-mtg-gold/5;
+    @apply transition-all duration-300 hover:border-gray-600/80 hover:shadow-xl hover:-translate-y-0.5;
   }
+
+  /* 稀有度边框 */
+  .card-mythic {
+    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    border-color: rgba(255, 111, 0, 0.35);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(255, 111, 0, 0.03) 100%);
+  }
+  .card-mythic:hover {
+    border-color: rgba(255, 111, 0, 0.6);
+    box-shadow: 0 8px 32px rgba(255, 111, 0, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .card-rare {
+    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    border-color: rgba(201, 168, 76, 0.35);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(201, 168, 76, 0.03) 100%);
+  }
+  .card-rare:hover {
+    border-color: rgba(201, 168, 76, 0.6);
+    box-shadow: 0 8px 32px rgba(201, 168, 76, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .card-uncommon {
+    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    border-color: rgba(158, 158, 158, 0.25);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(158, 158, 158, 0.02) 100%);
+  }
+  .card-uncommon:hover {
+    border-color: rgba(158, 158, 158, 0.5);
+    box-shadow: 0 8px 32px rgba(158, 158, 158, 0.06);
+    transform: translateY(-2px);
+  }
+
   .btn-primary {
     @apply bg-mtg-gold text-mtg-dark font-semibold px-4 py-2 rounded-lg 
            hover:brightness-110 transition-all active:scale-[0.98];
   }
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-mtg-gold to-amber-300;
+  }
+
+  /* 魔法力符号 */
+  .mana-symbol {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35em;
+    height: 1.35em;
+    border-radius: 50%;
+    font-size: 0.75em;
+    font-weight: 800;
+    line-height: 1;
+    flex-shrink: 0;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 1px 2px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.4);
+  }
+  .mana-w { background: linear-gradient(145deg, #FFF8E7, #E8DCC8); color: #5D4037; text-shadow: none; }
+  .mana-u { background: linear-gradient(145deg, #4FC3F7, #0288D1); color: white; }
+  .mana-b { background: linear-gradient(145deg, #9C27B0, #4A148C); color: white; }
+  .mana-r { background: linear-gradient(145deg, #FF7043, #C62828); color: white; }
+  .mana-g { background: linear-gradient(145deg, #66BB6A, #1B5E20); color: white; }
+
+  /* 稀有度徽章 */
+  .rarity-badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded border;
+  }
+  .rarity-mythic { @apply bg-orange-500/10 text-orange-400 border-orange-500/30; }
+  .rarity-rare { @apply bg-yellow-500/10 text-yellow-400 border-yellow-500/30; }
+  .rarity-uncommon { @apply bg-gray-400/10 text-gray-400 border-gray-400/30; }
+  .rarity-common { @apply bg-gray-600/10 text-gray-500 border-gray-600/30; }
+
+  /* 骨架屏 */
+  .skeleton {
+    @apply animate-pulse bg-gray-800/60 rounded;
+  }
+  .skeleton-bar {
+    @apply animate-pulse bg-gray-800/60 rounded;
+    background: linear-gradient(90deg, rgba(51,65,85,0.4) 25%, rgba(51,65,85,0.7) 50%, rgba(51,65,85,0.4) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  /* 页面过渡 */
+  .page-enter {
+    animation: pageFadeIn 0.5s ease-out forwards;
+  }
+  @keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 模块渐入 */
+  .section-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: revealUp 0.6s ease-out forwards;
+  }
+  @keyframes revealUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero背景 */
+  .hero-bg {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 40%, rgba(79, 195, 247, 0.06) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 80% 60%, rgba(229, 57, 53, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 60% at 50% 20%, rgba(201, 168, 76, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-bg > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 流动光晕 */
+  .mana-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    pointer-events: none;
+    animation: manaFloat 8s ease-in-out infinite;
+  }
+  @keyframes manaFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -30px) scale(1.1); }
+    66% { transform: translate(-15px, 15px) scale(0.95); }
+  }
+
+  /* 标题装饰线 */
+  .section-title {
+    @apply text-2xl font-bold mb-6 flex items-center gap-3;
+  }
+  .section-title::before {
+    content: '';
+    @apply w-1 h-6 rounded-full bg-mtg-gold;
   }
 }
 

@@ -7,7 +7,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
-    { label: 'Meta', labelCN: '元游戏', href: '/' },
+    { label: 'Meta', labelCN: '元游戏', href: '/#meta' },
     { label: 'Decks', labelCN: '套牌', href: '/#decks' },
     { label: 'Players', labelCN: '牌手', href: '/#players' },
     { label: 'Prices', labelCN: '牌价', href: '/#prices' },
@@ -16,24 +16,26 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-mtg-dark/80 backdrop-blur-md border-b border-gray-800/60">
+    <header className="sticky top-0 z-50 bg-mtg-void/80 backdrop-blur-md border-b border-gray-800/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-mtg-gold">MTG Modern</span>
-            <span className="text-xs text-gray-500 hidden sm:inline">Stats</span>
+          <Link href="/" className="flex items-center gap-2 group">
+            <span className="text-xl font-bold text-mtg-gold group-hover:brightness-110 transition-all">
+              MTG Modern
+            </span>
+            <span className="text-xs text-gray-600 hidden sm:inline">Stats</span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="text-sm text-gray-400 hover:text-mtg-gold transition-colors"
+                className="px-3 py-2 text-sm text-gray-400 hover:text-mtg-gold hover:bg-mtg-card/50 rounded-lg transition-all"
               >
-                {item.label}
-                <span className="text-gray-600 ml-1">{item.labelCN}</span>
+                <span className="font-medium">{item.label}</span>
+                <span className="text-gray-600 ml-1 text-xs">{item.labelCN}</span>
               </Link>
             ))}
           </nav>
@@ -41,7 +43,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-gray-400"
+            className="md:hidden p-2 text-gray-400 hover:text-gray-200 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isOpen ? (
@@ -55,15 +57,16 @@ export default function Header() {
 
         {/* Mobile Nav */}
         {isOpen && (
-          <nav className="md:hidden py-4 space-y-2">
+          <nav className="md:hidden py-3 pb-5 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className="block px-3 py-2 text-sm text-gray-400 hover:text-mtg-gold hover:bg-mtg-card rounded-lg"
+                className="block px-3 py-2.5 text-sm text-gray-400 hover:text-mtg-gold hover:bg-mtg-card rounded-lg transition-all"
               >
-                {item.label} · {item.labelCN}
+                <span className="font-medium">{item.label}</span>
+                <span className="text-gray-600 ml-1.5">{item.labelCN}</span>
               </Link>
             ))}
           </nav>

@@ -9,6 +9,7 @@ export interface DeckArchetype {
   keyCards: string[];
   price?: number; // deck price USD
   priceCN?: string;
+  colors?: ('W' | 'U' | 'B' | 'R' | 'G')[]; // mana identity
 }
 
 export interface MatchupMatrix {

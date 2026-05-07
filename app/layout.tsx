@@ -19,7 +19,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-mtg-dark text-gray-100">
+      <body className="min-h-screen bg-mtg-void text-gray-100 page-enter">
         {children}
       </body>
     </html>

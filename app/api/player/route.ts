@@ -1,13 +1,11 @@
 import { NextResponse } from 'next/server';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { getFallbackPlayers } from '@/lib/scrapers/mtgelo';
 
 export async function GET() {
-  const filePath = join(process.cwd(), 'public', 'data', 'players.json');
-  const data = JSON.parse(readFileSync(filePath, 'utf-8'));
-  return NextResponse.json(data, {
+  const players = getFallbackPlayers();
+  return NextResponse.json({ players }, {
     headers: {
-      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=3600',
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
     },
   });
 }
