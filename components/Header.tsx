@@ -9,6 +9,7 @@ export default function Header() {
   const navItems = [
     { label: 'Meta', labelCN: '元游戏', href: '/#meta' },
     { label: 'Decks', labelCN: '套牌', href: '/#decks' },
+    { label: 'Compare', labelCN: '对比', href: '/compare' },
     { label: 'Players', labelCN: '牌手', href: '/#players' },
     { label: 'Prices', labelCN: '牌价', href: '/#prices' },
     { label: 'Calendar', labelCN: '日历', href: '/calendar' },
