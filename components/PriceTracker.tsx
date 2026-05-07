@@ -13,14 +13,14 @@ import {
 import useSWR from 'swr';
 
 const TOP_CARDS = [
-  { name: 'Ragavan, Nimble Pilferer', nameCN: '敏捷窃贼拉加万' },
-  { name: 'Murktide Regent', nameCN: '墨鳕帝君' },
-  { name: 'Wrenn and Six', nameCN: '芮恩与六树妖' },
-  { name: 'Yawgmoth, Thran Physician', nameCN: '索族医师约格莫夫' },
-  { name: "Urza's Saga", nameCN: '克撒传人' },
+  { name: 'Guide of Souls', nameCN: '灵魂向导' },
+  { name: 'Galvanic Discharge', nameCN: '电镀放电' },
+  { name: 'Psychic Frog', nameCN: '灵能蛙' },
   { name: 'Primeval Titan', nameCN: '太初泰坦' },
-  { name: 'Grief', nameCN: '悲恸' },
-  { name: 'Fury', nameCN: '狂怒' },
+  { name: "Urza's Saga", nameCN: '克撒传人' },
+  { name: 'Overlord of the Balemurk', nameCN: '祸沼霸主' },
+  { name: 'Amulet of Vigor', nameCN: '活力护符' },
+  { name: 'Malevolent Rumble', nameCN: '恶意rumble' },
   { name: 'Lightning Bolt', nameCN: '闪电击' },
   { name: 'Thoughtseize', nameCN: '攫取思绪' },
 ];
