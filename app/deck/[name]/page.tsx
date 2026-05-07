@@ -126,11 +126,19 @@ export default function DeckPage({ params }: { params: { name: string } }) {
               <ManaSymbols colors={deck.colors} />
             </h1>
             {deck.nameCN && <p className="text-lg text-gray-500">{deck.nameCN}</p>}
-            {archetype && (
-              <span className="inline-block mt-1 text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
-                Archetype: {archetype}
-              </span>
-            )}
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              {archetype && (
+                <span className="inline-block text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
+                  Archetype: {archetype}
+                </span>
+              )}
+              <Link
+                href={`/deck-guide/${encodeURIComponent(deck.name.toLowerCase().replace(/\s+/g, '-'))}`}
+                className="inline-block text-xs text-mtg-gold bg-mtg-gold/10 px-2 py-0.5 rounded border border-mtg-gold/30 hover:brightness-110 transition-all"
+              >
+                Strategy Guide / 攻略 →
+              </Link>
+            </div>
           </div>
           <span className={`px-3 py-1 text-sm font-bold rounded border ${TIER_BADGES[deck.tier]}`}>
             Tier {deck.tier}
