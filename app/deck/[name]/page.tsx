@@ -17,30 +17,7 @@ import {
   Tooltip,
 } from 'recharts';
 import type { DeckArchetype } from '@/types';
-
-// Extended mock matchup data
-const MOCK_MATCHUPS = [
-  { opponent: 'Murktide Regent', winRate: 45 },
-  { opponent: 'Living End', winRate: 52 },
-  { opponent: 'Amulet Titan', winRate: 38 },
-  { opponent: 'Yawgmoth', winRate: 55 },
-  { opponent: 'Rakdos Scam', winRate: 48 },
-  { opponent: 'Hammer Time', winRate: 61 },
-  { opponent: 'Burn', winRate: 72 },
-  { opponent: 'Mono G Tron', winRate: 65 },
-];
-
-// Mock card list data
-const MOCK_MAINBOARD = [
-  { count: 4, name: "Ragavan, Nimble Pilferer", nameCN: "敏捷窃贼拉加万", price: 45 },
-  { count: 4, name: "Dragon's Rage Channeler", nameCN: "龙之怒祭师", price: 2 },
-  { count: 4, name: "Murktide Regent", nameCN: "墨鳕帝君", price: 38 },
-  { count: 4, name: "Lightning Bolt", nameCN: "闪电击", price: 3 },
-  { count: 4, name: "Unholy Heat", nameCN: "不洁热焰", price: 1 },
-  { count: 4, name: "Expressive Iteration", nameCN: "表达性迭代", price: 5 },
-  { count: 4, name: "Counterspell", nameCN: "反击咒语", price: 2 },
-  { count: 2, name: "Spell Pierce", nameCN: "法术刺穿", price: 1 },
-];
+import { getMatchupData, getDecklist, getDeckArchetype } from '@/lib/deck-data';
 
 const TIER_BADGES = {
   S: 'bg-red-500/20 text-red-400 border-red-500/30',
@@ -67,7 +44,6 @@ function ManaSymbols({ colors }: { colors?: string[] }) {
 /* 模拟历史占比数据 */
 function generateHistory(deckName: string, currentShare: number) {
   const weeks = ['2025-01-12', '2025-01-19', '2025-01-26', '2025-02-02', '2025-02-09', '2025-02-16', '2025-02-23', '2025-03-02', '2025-03-09', '2025-03-16', '2025-03-23', '2025-03-30'];
-  // 用当前 share 反向生成波动数据
   const base = currentShare;
   return weeks.map((w, i) => {
     const noise = Math.sin(i * 0.8 + deckName.length) * (base * 0.3);
@@ -78,19 +54,31 @@ function generateHistory(deckName: string, currentShare: number) {
 
 export default function DeckPage({ params }: { params: { name: string } }) {
   const [deck, setDeck] = useState<DeckArchetype | null>(null);
+  const [allDecks, setAllDecks] = useState<DeckArchetype[]>([]);
   const [loading, setLoading] = useState(true);
 
   const decodedName = decodeURIComponent(params.name).replace(/-/g, ' ');
 
   useEffect(() => {
-    fetch(`/api/deck?name=${encodeURIComponent(params.name)}`)
+    fetch('/api/metagame')
       .then((r) => r.json())
       .then((d) => {
-        setDeck(d.deck || null);
+        const decks = d.archetypes || [];
+        setAllDecks(decks);
+        const matched = decks.find((d: DeckArchetype) =>
+          d.name.toLowerCase() === decodedName.toLowerCase() ||
+          d.name.toLowerCase().replace(/\s+/g, '-') === decodedName.toLowerCase()
+        );
+        setDeck(matched || null);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [params.name]);
+  }, [decodedName]);
+
+  // 动态生成对战胜率和牌表
+  const matchupData = deck ? getMatchupData(deck.name, allDecks) : [];
+  const decklist = deck ? getDecklist(deck.name) : [];
+  const archetype = deck ? getDeckArchetype(deck.name) : null;
 
   if (loading) {
     return (
@@ -111,6 +99,7 @@ export default function DeckPage({ params }: { params: { name: string } }) {
   }
 
   const historyData = generateHistory(deck.name, deck.share);
+  const totalPrice = decklist.reduce((s, c) => s + (c.price || 0) * c.count, 0);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -126,6 +115,11 @@ export default function DeckPage({ params }: { params: { name: string } }) {
               <ManaSymbols colors={deck.colors} />
             </h1>
             {deck.nameCN && <p className="text-lg text-gray-500">{deck.nameCN}</p>}
+            {archetype && (
+              <span className="inline-block mt-1 text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
+                Archetype: {archetype}
+              </span>
+            )}
           </div>
           <span className={`px-3 py-1 text-sm font-bold rounded border ${TIER_BADGES[deck.tier]}`}>
             Tier {deck.tier}
@@ -159,9 +153,7 @@ export default function DeckPage({ params }: { params: { name: string } }) {
 
       {/* History Chart */}
       <div className="card mb-8">
-        <h2 className="text-lg font-bold text-gray-100 mb-4">
-          Meta Share History / 元游戏占比历史
-        </h2>
+        <h2 className="text-lg font-bold text-gray-100 mb-4">Meta Share History / 元游戏占比历史</h2>
         <p className="text-sm text-gray-500 mb-4">近12周占比走势 / 12-week share trend</p>
         <div className="h-56">
           <ResponsiveContainer width="100%" height="100%">
@@ -183,12 +175,10 @@ export default function DeckPage({ params }: { params: { name: string } }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Matchup Radar */}
         <div className="card">
-          <h2 className="text-lg font-bold text-gray-100 mb-4">
-            Matchup Analysis / 对战胜率分析
-          </h2>
+          <h2 className="text-lg font-bold text-gray-100 mb-4">Matchup Analysis / 对战胜率分析</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={MOCK_MATCHUPS}>
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={matchupData}>
                 <PolarGrid stroke="#334155" />
                 <PolarAngleAxis dataKey="opponent" tick={{ fill: '#94a3b8', fontSize: 10 }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fill: '#64748b' }} />
@@ -196,30 +186,36 @@ export default function DeckPage({ params }: { params: { name: string } }) {
               </RadarChart>
             </ResponsiveContainer>
           </div>
-          <p className="text-xs text-gray-500 mt-2">* Based on recent tournament data / 基于近期赛事数据</p>
+          <p className="text-xs text-gray-500 mt-2">* Based on archetype matchup theory / 基于 archetype 克制模型</p>
         </div>
 
         {/* Sample Decklist */}
         <div className="card">
           <h2 className="text-lg font-bold text-gray-100 mb-4">Sample List / 示例牌表</h2>
           <div className="space-y-1 max-h-80 overflow-y-auto scrollbar-thin">
-            {MOCK_MAINBOARD.map((card, i) => (
+            {decklist.length > 0 ? decklist.map((card, i) => (
               <div key={i} className="flex items-center justify-between py-1 px-2 hover:bg-gray-800/50 rounded">
                 <div className="flex items-center gap-2">
                   <span className="text-mtg-gold font-mono w-6">{card.count}</span>
                   <div>
                     <div className="text-sm text-gray-200">{card.name}</div>
-                    <div className="text-xs text-gray-500">{card.nameCN}</div>
+                    {card.nameCN && <div className="text-xs text-gray-500">{card.nameCN}</div>}
                   </div>
                 </div>
-                <span className="text-sm text-gray-500">${card.price * card.count}</span>
+                {card.price !== undefined && (
+                  <span className="text-sm text-gray-500">${card.price * card.count}</span>
+                )}
               </div>
-            ))}
+            )) : (
+              <div className="text-gray-500 text-sm">No decklist data available / 无牌表数据</div>
+            )}
           </div>
-          <div className="mt-4 pt-3 border-t border-gray-800 flex justify-between">
-            <span className="text-sm text-gray-500">Est. Mainboard Cost</span>
-            <span className="font-bold text-mtg-gold">${MOCK_MAINBOARD.reduce((s, c) => s + c.price * c.count, 0)}</span>
-          </div>
+          {totalPrice > 0 && (
+            <div className="mt-4 pt-3 border-t border-gray-800 flex justify-between">
+              <span className="text-sm text-gray-500">Est. Mainboard Cost</span>
+              <span className="font-bold text-mtg-gold">${totalPrice}</span>
+            </div>
+          )}
         </div>
       </div>
 
