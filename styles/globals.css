@@ -24,34 +24,46 @@
   /* 稀有度边框 */
   .card-mythic {
     @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
-    border-color: rgba(255, 111, 0, 0.35);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(255, 111, 0, 0.03) 100%);
+    border-color: rgba(255, 140, 40, 0.6);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(255, 111, 0, 0.04) 100%);
   }
   .card-mythic:hover {
-    border-color: rgba(255, 111, 0, 0.6);
-    box-shadow: 0 8px 32px rgba(255, 111, 0, 0.08);
+    border-color: rgba(255, 140, 40, 0.85);
+    box-shadow: 0 8px 32px rgba(255, 111, 0, 0.12);
     transform: translateY(-2px);
   }
 
   .card-rare {
     @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
-    border-color: rgba(201, 168, 76, 0.35);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(201, 168, 76, 0.03) 100%);
+    border-color: rgba(201, 168, 76, 0.45);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(201, 168, 76, 0.04) 100%);
   }
   .card-rare:hover {
-    border-color: rgba(201, 168, 76, 0.6);
-    box-shadow: 0 8px 32px rgba(201, 168, 76, 0.08);
+    border-color: rgba(201, 168, 76, 0.75);
+    box-shadow: 0 8px 32px rgba(201, 168, 76, 0.1);
     transform: translateY(-2px);
   }
 
   .card-uncommon {
     @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
-    border-color: rgba(158, 158, 158, 0.25);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(158, 158, 158, 0.02) 100%);
+    border-color: rgba(158, 158, 158, 0.35);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(158, 158, 158, 0.03) 100%);
   }
   .card-uncommon:hover {
-    border-color: rgba(158, 158, 158, 0.5);
-    box-shadow: 0 8px 32px rgba(158, 158, 158, 0.06);
+    border-color: rgba(158, 158, 158, 0.6);
+    box-shadow: 0 8px 32px rgba(158, 158, 158, 0.08);
+    transform: translateY(-2px);
+  }
+
+  /* C tier 用普通卡片但加一点暗色边框 */
+  .card-common {
+    @apply bg-mtg-card rounded-xl border p-6 shadow-lg;
+    border-color: rgba(75, 85, 99, 0.4);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(75, 85, 99, 0.02) 100%);
+  }
+  .card-common:hover {
+    border-color: rgba(75, 85, 99, 0.6);
+    box-shadow: 0 8px 32px rgba(75, 85, 99, 0.06);
     transform: translateY(-2px);
   }
 
